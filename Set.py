@@ -1,7 +1,7 @@
-import pyscreenshot as ImageGrab
+from PIL import ImageGrab
 import numpy as np
 import cv2
-import pyautogui
+# import pyautogui
 import os
 os.environ['DISPLAY'] = ':0'
 
@@ -20,7 +20,10 @@ def get_card_locs():
     global w, h
     w, h = template.shape[::-1]
     res = cv2.matchTemplate(img_gray,template,cv2.TM_CCORR_NORMED, None, mask)
-    threshold = 0.99
+    # cv2.imshow("asd", res)
+    # print(np.max(res))
+    # cv2.waitKey(1)
+    threshold = 0.97
     loc = np.where( res >= threshold)
     # for pt in zip(*loc[::-1]):
     #     cv2.rectangle(img_rgb, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
@@ -29,6 +32,7 @@ def get_card_locs():
     #     if cv2.waitKey(25) & 0xFF == ord('q'):
     #         cv2.destroyAllWindows()
     #         break
+    # print(loc)
     return loc
 
 def get_card(pt):
@@ -40,7 +44,7 @@ def get_card(pt):
     #         cv2.destroyAllWindows()
     #         break
     # pass
-    threshold = 0.97
+    threshold = 0.96
     while(True):
         color = 0 # green
         filling = 0 # empty
@@ -258,18 +262,23 @@ def find_disjunct(sets):
 
 if __name__ == "__main__":
     global img_rgb
+   
     # keyboard.on_press_key("p", lambda _:exit())
     
     while(True):
-        #keyboard.wait('j')
+        # keyboard.wait('j')
         loc = get_card_locs()
+        # cv2.imshow("asd", img_rgb)
+        # cv2.waitKey(1)
         print(len(tuple(zip(*loc[::-1]))))
         if len(tuple(zip(*loc[::-1]))) >= 9:
             cards = []
             for i in zip(*loc[::-1]):
                 cards.append(get_card(i))
+            for card in cards:
+                print(card)
             sets = find_sets(cards)
-            kaki = 0
+            # kaki = 0
             sets = find_disjunct(sets)
             for Set in sets:
                 for asd in Set:
